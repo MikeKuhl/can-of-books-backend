@@ -1,7 +1,3 @@
-
-
-
-
 # Can Of Books
 
 **Author**: Michael Milsap & Beau Hibbert
@@ -23,6 +19,9 @@ Javascript,React,Mongodb
 
 ## Estimates
 <!-- See below -->
+
+## Credit and Collaborations
+
 Name of feature: ________________________________
 
 Estimate of time needed to complete: 2Hrs
@@ -32,5 +31,3 @@ Start time: 3:30
 Finish time: _____
 
 Actual time needed to complete: _____
-## Credit and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
