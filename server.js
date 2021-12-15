@@ -1,12 +1,15 @@
-'use strict';
+"use strict";
 
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const Book = require('./models/bookModel')
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const Book = require("./models/bookModel");
 const app = express();
 const mongoose = require('mongoose');
 
+app.get("/test", (request, response) => {
+  response.send("test request received");
+});
 
 app.use(cors());
 app.use(express.json())
@@ -20,16 +23,22 @@ app.get('/test', (request, response) => {
 app.get('/books', handleGetBooks)
 app.post('/books:id',handlePostBooks)
 
-async function handleGetBooks(req,res) {
+async function handleGetBooks(req, res) {
+  const bookSearch = {};
+
+  if (req.query.email) {
+    searchObject.email = req.query.email;
+  }
   try {
-    const booksDB =  await Book.find({});
-    if (booksDB) {
-      res.status(200).send(booksDB)
+    const booksDB = await Book.find(bookSearch);
+    if (booksDB.length > 0) {
+      res.status(200).send(booksDB);
     } else {
-      res.status(404).send('No books!')
+      res.status(404).send("error books not found");
     }
   } catch (e) {
-    res.status(500).send('Server Error!')
+    console.error(e);
+    res.status(500).send("Bookshelf Error");
   }
 }
 
@@ -39,9 +48,9 @@ mongoose.connect(process.env.DB_URL);
 
 mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Mongoose is connected')
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+  console.log("Mongoose is connected");
 });
 
 async function handlePostBooks(req, res) {

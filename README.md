@@ -16,18 +16,19 @@ Javascript,React,Mongodb
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an example:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource. -->
+12-13-2021: Backend and Database communicating with frontend. Added Bootstrap Carousel ternary operation and user ternary operation.
 
 ## Estimates
 <!-- See below -->
 
 ## Credit and Collaborations
 
-Name of feature: ________________________________
+Name of feature: Building CRUD apps with MongoDB
 
 Estimate of time needed to complete: 2Hrs
 
 Start time: 3:30
 
-Finish time: _____
+Finish time: 7:00pm
 
-Actual time needed to complete: _____
+Actual time needed to complete: 4Hours
