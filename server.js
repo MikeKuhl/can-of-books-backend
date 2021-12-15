@@ -6,8 +6,10 @@ const cors = require('cors');
 const Book = require('./models/bookModel')
 const app = express();
 const mongoose = require('mongoose');
-app.use(cors());
 
+
+app.use(cors());
+app.use(express.json())
 
 app.get('/test', (request, response) => {
 
@@ -16,6 +18,7 @@ app.get('/test', (request, response) => {
 })
 
 app.get('/books', handleGetBooks)
+app.post('/books:id',handlePostBooks)
 
 async function handleGetBooks(req,res) {
   try {
@@ -40,5 +43,16 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log('Mongoose is connected')
 });
+
+async function handlePostBooks(req, res) {
+  // console.log(req.body);
+  try {
+    const bookMaker = await Book.create(req.body);
+    res.status(204).send(bookMaker);
+  }catch (e){
+    res.status(500).send('Bookshelf error')
+  }
+  
+}
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
