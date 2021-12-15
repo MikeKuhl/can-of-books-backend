@@ -5,24 +5,23 @@ const express = require("express");
 const cors = require("cors");
 const Book = require("./models/bookModel");
 const app = express();
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 app.get("/test", (request, response) => {
   response.send("test request received");
 });
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
-app.get('/test', (request, response) => {
+app.get("/test", (request, response) => {
+  response.send("test request received");
+});
 
-  response.send('test request received')
-
-})
-
-app.get('/books', handleGetBooks)
-app.post('/books:id',handlePostBooks)
-app.delete('/books:id', handleDeleteBooks)
+app.get("/books", handleGetBooks);
+app.post("/books:id", handlePostBooks);
+app.delete("/books:id", handleDeleteBooks);
+app.put("/books/:id", handlePutBooks);
 
 async function handleGetBooks(req, res) {
   const bookSearch = {};
@@ -43,7 +42,7 @@ async function handleGetBooks(req, res) {
   }
 }
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 mongoose.connect(process.env.DB_URL);
 
@@ -56,22 +55,29 @@ db.once("open", function () {
 
 async function handlePostBooks(req, res) {
   // console.log(req.body);
+  const { email } = req.query;
+  const { title, description, status } = req.body;
   try {
-    const bookMaker = await Book.create(req.body);
-    res.status(204).send(bookMaker);
-  }catch (e){
-    res.status(500).send('Bookshelf error')
+    const newBook = await Book.create({ ...req.body, email });
+    res.status(204).send(newBook);
+  } catch (e) {
+    res.status(500).send("Bookshelf error");
   }
-  
 }
 
 async function handleDeleteBooks(req, res) {
-  const { id } = req.params
+  //matching the books IDs and Emails before delete
+  const { id } = req.params;
+  const { email } = req.query;
   try {
-    await Book.findByIdAndDelete(id);
-    res.status(204).send('succes')
+    const book = await Book.findOne({ _id: id, email });
+    if (!book) res.status(400).send("Could not delete book");
+    else {
+      await Book.findByIdAndDelete(id);
+      res.status(204).send("delete success");
+    }
   } catch (e) {
-  res.status(200).send('server error')
+    res.status(500).send("server error");
   }
 }
 
