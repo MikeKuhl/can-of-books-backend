@@ -19,6 +19,7 @@ app.get('/test', (request, response) => {
 
 app.get('/books', handleGetBooks)
 app.post('/books:id',handlePostBooks)
+app.delete('/books:id', handleDeleteBooks)
 
 async function handleGetBooks(req,res) {
   try {
@@ -53,6 +54,16 @@ async function handlePostBooks(req, res) {
     res.status(500).send('Bookshelf error')
   }
   
+}
+
+async function handleDeleteBooks(req, res) {
+  const { id } = req.params
+  try {
+    await Book.findByIdAndDelete(id);
+    res.status(204).send('succes')
+  } catch (e) {
+  res.status(200).send('server error')
+  }
 }
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
