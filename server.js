@@ -55,14 +55,13 @@ db.once("open", function () {
 
 async function handlePostBooks(req, res) {
   // console.log(req.body);
-  const { email } = req.query;
 
+  // const { email } = req.query
   try {
-    const newBook = await Book.create({ ...req.body, email });
-    res.status(204).send(newBook);
+    const newBook = await Book.create(req.body);
+    res.status(200).send(newBook);
   } catch (e) {
-    console.error(e);
-    res.status(500).send("Bookshelf error");
+    res.status(500).send("Server Error, try again");
   }
 }
 
