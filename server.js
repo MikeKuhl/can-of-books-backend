@@ -46,7 +46,6 @@ const PORT = process.env.PORT || 3002;
 
 mongoose.connect(process.env.DB_URL);
 
-mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function () {
@@ -56,9 +55,9 @@ db.once("open", function () {
 async function handlePostBooks(req, res) {
   // console.log(req.body);
 
-  // const { email } = req.query
+  const { email } = req.query;
   try {
-    const newBook = await Book.create(req.body);
+    const newBook = await Book.create({ ...req.body, email });
     res.status(200).send(newBook);
   } catch (e) {
     res.status(500).send("Server Error, try again");
