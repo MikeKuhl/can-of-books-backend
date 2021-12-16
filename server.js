@@ -56,11 +56,12 @@ db.once("open", function () {
 async function handlePostBooks(req, res) {
   // console.log(req.body);
   const { email } = req.query;
-  const { title, description, status } = req.body;
+
   try {
     const newBook = await Book.create({ ...req.body, email });
     res.status(204).send(newBook);
   } catch (e) {
+    console.error(e);
     res.status(500).send("Bookshelf error");
   }
 }
@@ -74,9 +75,10 @@ async function handleDeleteBooks(req, res) {
     if (!book) res.status(400).send("Could not delete book");
     else {
       await Book.findByIdAndDelete(id);
-      res.status(204).send("delete success");
+      res.status(200).send("delete success");
     }
   } catch (e) {
+    console.error(e);
     res.status(500).send("server error");
   }
 }
