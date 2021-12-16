@@ -20,7 +20,7 @@ app.get("/test", (request, response) => {
 
 app.get("/books", handleGetBooks);
 app.post("/books", handlePostBooks);
-app.delete("/books:id", handleDeleteBooks);
+app.delete("/books/:id", handleDeleteBooks);
 app.put("/books/:id", handlePutBooks);
 
 async function handleGetBooks(req, res) {
