@@ -27,7 +27,7 @@ async function handleGetBooks(req, res) {
   const bookSearch = {};
 
   if (req.query.email) {
-    searchObject.email = req.query.email;
+    bookSearch.email = req.query.email;
   }
   try {
     const booksDB = await Book.find(bookSearch);
