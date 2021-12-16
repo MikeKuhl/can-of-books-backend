@@ -19,7 +19,7 @@ app.get("/test", (request, response) => {
 });
 
 app.get("/books", handleGetBooks);
-app.post("/books:id", handlePostBooks);
+app.post("/books", handlePostBooks);
 app.delete("/books:id", handleDeleteBooks);
 app.put("/books/:id", handlePutBooks);
 
