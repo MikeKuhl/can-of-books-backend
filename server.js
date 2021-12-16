@@ -21,7 +21,7 @@ app.get("/test", (request, response) => {
 app.get("/books", handleGetBooks);
 app.post("/books", handlePostBooks);
 app.delete("/books/:id", handleDeleteBooks);
-app.put("/books/:id", handlePutBooks);
+app.put("/books/:id", handleUpdatedBooks);
 
 async function handleGetBooks(req, res) {
   const bookSearch = {};
@@ -81,7 +81,7 @@ async function handleDeleteBooks(req, res) {
   }
 }
 
-async function handlePutBooks(req, res) {
+async function handleUpdatedBooks(req, res) {
   const { id } = req.params;
 
   try {
