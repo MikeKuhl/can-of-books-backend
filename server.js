@@ -83,4 +83,16 @@ async function handleDeleteBooks(req, res) {
   }
 }
 
+async function handlePutBooks(req, res) {
+  const { id } = req.params;
+
+  try {
+    const bookUpdate = await Book.findByIdAndUpdate(id, req.body);
+    res.status(201).send(bookUpdate);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("Update Fail. Server Error");
+  }
+}
+
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
