@@ -6,6 +6,7 @@ const cors = require("cors");
 const Book = require("./models/bookModel");
 const app = express();
 const mongoose = require("mongoose");
+const verifyUser = require("./auth.js");
 
 app.get("/test", (request, response) => {
   response.send("test request received");
@@ -22,6 +23,7 @@ app.get("/books", handleGetBooks);
 app.post("/books", handlePostBooks);
 app.delete("/books/:id", handleDeleteBooks);
 app.put("/books/:id", handleUpdatedBooks);
+app.get("/", handleGetUser);
 
 async function handleGetBooks(req, res) {
   const bookSearch = {};
@@ -83,17 +85,30 @@ async function handleDeleteBooks(req, res) {
 
 async function handleUpdatedBooks(req, res) {
   const { id } = req.params;
-
+  const { email } = req.query;
   try {
-    const bookUpdate = await Book.findByIdAndUpdate(id, req.body, {
-      new: true,
-      overwrite: true,
-    });
-    res.status(201).send(bookUpdate);
+    const book = await Book.findOne({ _id: id, email });
+    if (!book) res.status(400).send("unable to update book");
+    else {
+      const updatedBook = await Book.findByIdAndUpdate(
+        id,
+        { ...req.body, email },
+        { new: true, overwrite: true }
+      );
+      res.status(200).send(updatedBook);
+    }
   } catch (e) {
-    console.error(e);
-    res.status(500).send("Update Fail. Server Error");
+    res.status(500).send("server error");
   }
 }
 
+function handleGetUser(req, res) {
+  verifyUser(req, (err, user) => {
+    if (err) {
+      res.send("Invalid Token");
+    } else {
+      res.send(user);
+    }
+  });
+}
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
