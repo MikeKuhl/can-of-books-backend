@@ -6,6 +6,7 @@ const cors = require("cors");
 const Book = require("./models/bookModel");
 const app = express();
 const mongoose = require("mongoose");
+const verifyUser = require("./auth.js");
 
 app.get("/test", (request, response) => {
   response.send("test request received");
@@ -22,26 +23,34 @@ app.get("/books", handleGetBooks);
 app.post("/books", handlePostBooks);
 app.delete("/books/:id", handleDeleteBooks);
 app.put("/books/:id", handleUpdatedBooks);
+app.get("/", handleGetUser);
 
 async function handleGetBooks(req, res) {
-  const bookSearch = {};
+  // const bookSearch = {};
 
-  if (req.query.email) {
-    bookSearch.email = req.query.email;
-  }
-  try {
-    const booksDB = await Book.find(bookSearch);
-    if (booksDB.length > 0) {
-      res.status(200).send(booksDB);
+  // if (req.query.email) {
+  //   bookSearch.email = req.query.email;
+  // }
+  verifyUser(req, async (err, user) => {
+    if (err) {
+      console.error(err);
+      res.send("invalid token");
     } else {
-      res.status(404).send("error books not found");
+      try {
+        const booksDB = await Book.find(bookSearch);
+        if (booksDB.length > 0) {
+          res.status(200).send(booksDB);
+          W;
+        } else {
+          res.status(404).send("error books not found");
+        }
+      } catch (e) {
+        console.error(e);
+        res.status(500).send("Bookshelf Error");
+      }
     }
-  } catch (e) {
-    console.error(e);
-    res.status(500).send("Bookshelf Error");
-  }
+  });
 }
-
 const PORT = process.env.PORT || 3002;
 
 mongoose.connect(process.env.DB_URL);
@@ -69,7 +78,7 @@ async function handleDeleteBooks(req, res) {
   const { id } = req.params;
   const { email } = req.query;
   try {
-    const book = await Book.findOne({ _id: id, email });
+    const book = await Book.findOne({ _id: id, email: user.email });
     if (!book) res.status(400).send("Could not delete book");
     else {
       await Book.findByIdAndDelete(id);
@@ -83,17 +92,30 @@ async function handleDeleteBooks(req, res) {
 
 async function handleUpdatedBooks(req, res) {
   const { id } = req.params;
-
+  const { email } = req.query;
   try {
-    const bookUpdate = await Book.findByIdAndUpdate(id, req.body, {
-      new: true,
-      overwrite: true,
-    });
-    res.status(201).send(bookUpdate);
+    const book = await Book.findOne({ _id: id, email });
+    if (!book) res.status(400).send("unable to update book");
+    else {
+      const updatedBook = await Book.findByIdAndUpdate(
+        id,
+        { ...req.body, email },
+        { new: true, overwrite: true }
+      );
+      res.status(200).send(updatedBook);
+    }
   } catch (e) {
-    console.error(e);
-    res.status(500).send("Update Fail. Server Error");
+    res.status(500).send("server error");
   }
 }
 
+function handleGetUser(req, res) {
+  verifyUser(req, (err, user) => {
+    if (err) {
+      res.send("Invalid Token");
+    } else {
+      res.send(user);
+    }
+  });
+}
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
